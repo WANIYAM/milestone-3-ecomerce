@@ -1,39 +1,49 @@
-import Link from 'next/link';
-import { simplifiedProduct } from "../interface";
-import { client } from "../lib/sanity";
+import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react';
-import Image from 'next/image';
+import { simplifiedProduct } from '../interface';
+import { client } from '../lib/sanity';
 
-async function getData(){
-    const query =`*[_type =='product'][0...4] | order(_createdAt desc){
+
+
+const getData = async () => {
+  
+  const query = `*[_type == "product"]{
   _id,
-    price,
     name,
-    "slug":slug.current,
-    "categoryName":category->name,
-    "imageUrl":images[0].asset->url
+    price, 
+    "imageUrl" : images[0].asset->url,
+    "slug": slug.current,
+    "category" : category->name
 }`;
-const data = await client.fetch(query);
-console.log("Fetched Data:", data);
-return data;
-} 
 
-export default async function Newest(){
-const data:simplifiedProduct[]= await getData();
-return (
-    <div >
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-    <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-100">Our Newest product</h2>
-        <Link className='text-primary flex items-center gap-x-1' href="/all">
-            See all{""}
+  const data = await client.fetch(query);
+  return data;
+};
+
+
+
+const AllProducts = async () => {
+
+    const data:simplifiedProduct[] = await getData()
+
+  return (
+    <div className="my-32">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6  lg:max-w-7xl lg:px-8">
+        <div className="flex justify-between items-center">
+          <h2 className="font-bold text-2xl text-gray-100 tracking-tight">
+            Our All Products
+          </h2>
+
+          <Link className="text-primary flex items-center gap-x-1" href="/all">
+            See All{" "}
             <span>
-                <ArrowRight/>
+              <ArrowRight />
             </span>
-        </Link>
-    </div>
-</div>
-<div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 xl:gap-x-8">
+          </Link>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 xl:gap-x-8">
           {data.map((product) => (
             <div key={product._id} className="group relative">
               <div className="aspect-square w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-80">
@@ -50,7 +60,7 @@ return (
 
               <div className="mt-4 flex justify-between">
                 <div>
-                  <h3 className="text-sm text-gray-200">{product.name}</h3>
+                  <h3 className="text-sm text-gray-700">{product.name}</h3>
                   <p className="mt-1 text-sm text-gray-500">
                     {product.category}
                   </p>
@@ -62,7 +72,9 @@ return (
             </div>
           ))}
         </div>
-
+      </div>
     </div>
-)
+  )
 }
+
+export default AllProducts

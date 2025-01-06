@@ -1,5 +1,6 @@
 
 export interface simplifiedProduct{
+    category: string; 
     _id:string;
     imageUrl:string;
     price:number;
